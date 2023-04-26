@@ -72,9 +72,9 @@ async def command_start_handler(message: types.Message) -> None:
     ]
 
     if settings.is_bot_admin(message.from_user.id):
-        await bot.set_my_commands(admin_commands_private, types.BotCommandScopeChat(chat_id=message.from_user.id))
+        await bot.set_my_commands(user_commands + admin_commands_private, types.BotCommandScopeChat(chat_id=message.from_user.id))
 
-    await bot.set_my_commands(group_admin_commands, types.BotCommandScopeAllChatAdministrators())
+    await bot.set_my_commands(user_commands + group_admin_commands, types.BotCommandScopeAllChatAdministrators())
     await bot.set_my_commands(user_commands, types.BotCommandScopeAllGroupChats())
     await message.answer('Список команд обновлен.')
 
