@@ -2,7 +2,6 @@ from typing import Optional
 
 from aiogram.types import Message
 
-import constants
 from bot.utils import is_main_admin
 from db import DataFile
 
@@ -10,7 +9,9 @@ data = DataFile('settings')
 
 
 class Settings:
-    def __init__(self, topics: Optional[dict[int, int]] = None, bot_admins: Optional[list[int]] = None):
+    def __init__(self,
+                 topics: Optional[dict[int, int]] = None,
+                 bot_admins: Optional[list[int]] = None):
         self.group_threads = topics or {}
         self.bot_admins = bot_admins or []
 
