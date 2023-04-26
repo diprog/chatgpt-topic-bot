@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
 from aiogram import Dispatcher
 
 from bot import bot
