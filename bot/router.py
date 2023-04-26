@@ -3,7 +3,6 @@ import traceback
 from aiogram import Router, types, Bot
 from aiogram.enums import ChatType, ParseMode
 from aiogram.filters import Command
-from aiogram.types import BotCommand, BotCommandScopeChat
 
 import constants
 import db.admin_requests
@@ -43,14 +42,29 @@ async def topic_filter(message: types.Message, topic=True):
 
 @router.message(Command('start'))
 async def command_start_handler(message: types.Message) -> None:
+    bot = Bot.get_current()
     settings = await db.settings.get()
+
+    group_admin_commands = [
+        types.BotCommand(command='/start', description='Обновить список команд.'),
+        types.BotCommand(command='/set', description='Отвечать только в топике, в котором вы отправили эту команду.'),
+        types.BotCommand(command='/logging', description='Выбрать эту группу для отправки истории сообщений.'),
+    ]
+
+    admin_commands_private = [
+        types.BotCommand(command='/start', description='Обновить список команд.'),
+        types.BotCommand(command='/admins', description='Управлять выданнами правами администратора.'),
+    ]
+
+    user_commands = [
+        types.BotCommand(command='/clear', description='Очистить свой контекст.')
+    ]
+
     if settings.is_bot_admin(message.from_user.id):
-        commands = [
-            BotCommand(command='/start', description='Обновить список команд.'),
-            BotCommand(command='/admins', description='Управлять выданными правами администратора.'),
-            BotCommand(command='/set', description='Отвечать только в топике, в котором вы отправили эту команду.')
-        ]
-        await Bot.get_current().set_my_commands(commands, BotCommandScopeChat(chat_id=message.from_user.id))
+        await bot.set_my_commands(admin_commands_private, types.BotCommandScopeChat(chat_id=message.from_user.id))
+
+    await bot.set_my_commands(group_admin_commands, types.BotCommandScopeAllChatAdministrators())
+    await bot.set_my_commands(user_commands, types.BotCommandScopeAllGroupChats())
     await message.answer('Список команд обновлен.')
 
 
