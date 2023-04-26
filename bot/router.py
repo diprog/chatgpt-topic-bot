@@ -40,6 +40,17 @@ async def topic_filter(message: types.Message, topic=True):
     return True
 
 
+async def send_logging_message(user: types.User, text: str) -> types.Message:
+    bot = Bot.get_current()
+    logging = await db.logging.get()
+    if logging.group_id:
+        if not logging.get_user_thread(user.id):
+            forum_topic = await bot.create_forum_topic(logging.group_id, user.full_name)
+            await logging.set_user_thread(user, forum_topic.message_thread_id)
+        if thread_id := logging.get_user_thread(user.id):
+            return await bot.send_message(logging.group_id, text, thread_id)
+
+
 @router.message(Command('start'))
 async def command_start_handler(message: types.Message) -> None:
     bot = Bot.get_current()
@@ -128,6 +139,7 @@ async def admin_remove(query: types.CallbackQuery, callback_data: callback_data.
 async def command_clear(message: types.Message) -> None:
     if await db.user_contexts.clear(message.from_user.id):
         await message.reply('🗑 Вы успешно очистили свой контекст.')
+        await send_logging_message(message.from_user, '🗑 <i>Пользователь очистил свой контекст.</i>')
     else:
         await message.reply('Ваш контекст уже очищен.')
 
@@ -169,14 +181,8 @@ async def any_message(message: types.Message) -> None:
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
 
-                logging = await db.logging.get()
-                if logging.group_id:
-                    if not logging.get_user_thread(user_id):
-                        forum_topic = await bot.create_forum_topic(logging.group_id, message.from_user.full_name)
-                        await logging.set_user_thread(message.from_user, forum_topic.message_thread_id)
-                    if thread_id := logging.get_user_thread(user_id):
-                        await bot.send_message(logging.group_id, '👤 ' + message.text, thread_id)
-                        await bot.send_message(logging.group_id, '🤖 ' + answer, thread_id, parse_mode=ParseMode.MARKDOWN)
+                user_message = await send_logging_message(message.from_user, '👤 ' + message.text)
+                await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
