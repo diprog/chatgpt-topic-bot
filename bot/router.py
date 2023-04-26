@@ -17,6 +17,29 @@ from chatgpt import ChatGPT
 router = Router()
 
 
+async def topic_filter(message: types.Message):
+    if not message.chat.is_forum:
+        await message.answer('❗️ Команда доступна только в группе с топиками.')
+        return False
+
+    settings = await db.settings.get()
+    if not settings.is_bot_admin(message.from_user.id):
+        await message.reply('❗️ Команда доступна только администрации бота.')
+        return False
+
+    if not isinstance(await message.chat.get_member(message.from_user.id),
+                      (types.ChatMemberOwner, types.ChatMemberAdministrator)):
+        if not is_main_admin(message.from_user.id):
+            await message.reply('❗️ Команда доступна только владельцу группы.')
+            return False
+
+    if not message.message_thread_id:
+        await message.reply('❗️ Команда может быть использована только внутри топика.')
+        return False
+
+    return True
+
+
 @router.message(Command('start'))
 async def command_start_handler(message: types.Message) -> None:
     settings = await db.settings.get()
@@ -96,27 +119,10 @@ async def command_clear(message: types.Message) -> None:
 
 @router.message(Command('set'))
 async def command_start_handler(message: types.Message) -> None:
-    if not message.chat.is_forum:
-        await message.answer('❗️ Команда доступна только в группе с топиками.')
-        return
-
-    settings = await db.settings.get()
-    if not settings.is_bot_admin(message.from_user.id):
-        await message.reply('❗️ Команда доступна только администрации бота.')
-        return
-
-    if not isinstance(await message.chat.get_member(message.from_user.id),
-                      (types.ChatMemberOwner, types.ChatMemberAdministrator)):
-        if not is_main_admin(message.from_user.id):
-            await message.reply('❗️ Команда доступна только владельцу группы.')
-            return
-
-    if not message.message_thread_id:
-        await message.reply('❗️ Команда может быть использована только внутри топика.')
-        return
-
-    await settings.set_topic_for_group(message.chat.id, message.message_thread_id)
-    await message.reply('✅ Теперь бот будет работать внутри этого топика.')
+    if topic_filter(message):
+        settings = await db.settings.get()
+        await settings.set_topic_for_group(message.chat.id, message.message_thread_id)
+        await message.reply('✅ Теперь бот будет работать внутри этого топика.')
 
 
 @router.message()
