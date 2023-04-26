@@ -44,7 +44,7 @@ PuTTY - это клиент для протокола SSH, который мож
 
 # 💿 Установка и запуск (Ubuntu 22.04)
 
-## 1. Базовые пакеты
+### 1. Базовые пакеты
 Для начала установим оболочку `fish` для замены `bash` для более удобного управления терминалом и screen, чтобы легко запускать бота в фоне.
 `screen` обычно уже предустановлен в системе.
 ```
@@ -55,7 +55,7 @@ sudo apt install fish screen
 ```
 fish
 ```
-## 2. Python 3.11
+### 2. Python 3.11
 Установим Python версии 3.11:
 ```
 sudo apt install software-properties-common -y
@@ -66,7 +66,7 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 ```
 sudo apt install python3.11 python3-pip python3.11-venv
 ```
-## 3. Запуск
+### 3. Запуск
 Копируем этот репозиторий (бота) в папку chatgpt-topic-bot по пути, в котором вы сейчас находитесь:
 ```
 git clone https://diprog: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@github.com/diprog/chatgpt-topic-bot.git
