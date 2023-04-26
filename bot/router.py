@@ -1,3 +1,5 @@
+import traceback
+
 from aiogram import Router, types, Bot
 from aiogram.enums import ChatType
 from aiogram.filters import Command
@@ -120,9 +122,13 @@ async def any_message(message: types.Message) -> None:
             settings.is_bot_admin(user_id) and message.chat.type == ChatType.PRIVATE):
         reply_message = await message.reply('🕑 Пожалуйста, подождите...')
         async with ChatGPT('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') as gpt:
-            contexts = await db.user_contexts.get()
-            print(contexts.length(user_id))
-            answer = await gpt.completions(contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
-            await contexts.add_message(user_id, message.text, 'user')
-            await contexts.add_message(user_id, answer, 'assistant')
-            await reply_message.edit_text(answer)
+            try:
+                contexts = await db.user_contexts.get()
+                print(contexts.length(user_id))
+                answer = await gpt.completions(contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
+                await reply_message.edit_text(answer)
+                await contexts.add_message(user_id, message.text, 'user')
+                await contexts.add_message(user_id, answer, 'assistant')
+            except:
+                await reply_message.edit_text('🔴 Произошла ошибка.')
+                await Bot.get_current().send_message(constants.DEVELOPER_ID, traceback.format_exc())
