@@ -20,6 +20,7 @@ class Logging:
         return self.user_threads.get(user_id)
 
     async def set_group(self, group_id: int):
+        self.user_threads = {}
         self.group_id = group_id
         await data.write(self)
 
