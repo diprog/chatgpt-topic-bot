@@ -171,7 +171,7 @@ async def any_message(message: types.Message) -> None:
     if (message.message_thread_id and settings.is_message_in_allowed_thread(message)) or (
             settings.is_bot_admin(user_id) and message.chat.type == ChatType.PRIVATE):
         reply_message = await message.reply('🕑 Пожалуйста, подождите...')
-        async with ChatGPT('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') as gpt:
+        async with ChatGPT(constants.CHATGPT_KEY) as gpt:
             try:
                 contexts = await db.user_contexts.get()
                 print(contexts.length(user_id))
