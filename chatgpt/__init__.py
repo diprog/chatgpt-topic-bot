@@ -52,7 +52,7 @@ class ChatGPT:
     async def get_models(self):
         return await self.get('/v1/models')
 
-    async def completions(self, messages: list[dict], temperature=0.7):
+    async def completions(self, messages: list[dict], temperature=1.0):
         response = await self.post('/v1/chat/completions', model=self.default_model, messages=messages,
                                    temperature=temperature)
         return response['choices'][0]['message']['content']
