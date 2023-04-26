@@ -181,8 +181,8 @@ async def any_message(message: types.Message) -> None:
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
 
-                user_message = await send_logging_message(message.from_user, '👤 ' + message.text)
-                await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN)
+                if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
+                    await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
