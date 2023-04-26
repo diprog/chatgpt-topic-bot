@@ -176,7 +176,7 @@ async def any_message(message: types.Message) -> None:
                         await logging.set_user_thread(message.from_user, forum_topic.message_thread_id)
                     if thread_id := logging.get_user_thread(user_id):
                         await bot.send_message(logging.group_id, '👤 ' + message.text, thread_id)
-                        await bot.send_message(logging.group_id, '🤖 ' + answer, thread_id)
+                        await bot.send_message(logging.group_id, '🤖 ' + answer, thread_id, parse_mode=ParseMode.MARKDOWN)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
