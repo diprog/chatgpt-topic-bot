@@ -7,6 +7,7 @@ from aiogram.types import BotCommand, BotCommandScopeChat
 
 import constants
 import db.admin_requests
+import db.logging
 import db.settings
 import db.user_contexts
 from bot import callback_data
@@ -17,7 +18,7 @@ from chatgpt import ChatGPT
 router = Router()
 
 
-async def topic_filter(message: types.Message):
+async def topic_filter(message: types.Message, topic=True):
     if not message.chat.is_forum:
         await message.answer('❗️ Команда доступна только в группе с топиками.')
         return False
@@ -33,7 +34,7 @@ async def topic_filter(message: types.Message):
             await message.reply('❗️ Команда доступна только владельцу группы.')
             return False
 
-    if not message.message_thread_id:
+    if not message.message_thread_id and topic:
         await message.reply('❗️ Команда может быть использована только внутри топика.')
         return False
 
@@ -117,9 +118,17 @@ async def command_clear(message: types.Message) -> None:
         await message.reply('Ваш контекст уже очищен.')
 
 
+@router.message(Command('logging'))
+async def command_logging(message: types.Message) -> None:
+    if await topic_filter(message, topic=False):
+        logging = await db.logging.get()
+        await logging.set_group(message.chat.id)
+        await message.reply('✅ Эта группа выбрана для логов.')
+
+
 @router.message(Command('set'))
 async def command_start_handler(message: types.Message) -> None:
-    if topic_filter(message):
+    if await topic_filter(message):
         settings = await db.settings.get()
         await settings.set_topic_for_group(message.chat.id, message.message_thread_id)
         await message.reply('✅ Теперь бот будет работать внутри этого топика.')
@@ -130,6 +139,7 @@ async def any_message(message: types.Message) -> None:
     if not message.text or message.text.startswith('/'):
         return
 
+    bot = Bot.get_current()
     user_id = message.from_user.id
     settings = await db.settings.get()
     if (message.message_thread_id and settings.is_message_in_allowed_thread(message)) or (
@@ -144,7 +154,16 @@ async def any_message(message: types.Message) -> None:
                 await reply_message.edit_text(answer, parse_mode=ParseMode.MARKDOWN)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
+
+                logging = await db.logging.get()
+                if logging.group_id:
+                    if not logging.get_user_thread(user_id):
+                        forum_topic = await bot.create_forum_topic(logging.group_id, message.from_user.full_name)
+                        await logging.set_user_thread(message.from_user, forum_topic.message_thread_id)
+                    if thread_id := logging.get_user_thread(user_id):
+                        await bot.send_message(logging.group_id, '👤 ' + message.text, thread_id)
+                        await bot.send_message(logging.group_id, '🤖 ' + answer, thread_id)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
-                await Bot.get_current().send_message(constants.DEVELOPER_ID, traceback.format_exc())
+                await bot.send_message(constants.DEVELOPER_ID, traceback.format_exc())
