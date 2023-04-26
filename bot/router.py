@@ -28,9 +28,7 @@ async def topic_filter(message: types.Message, topic=True):
         return False
 
     chat_member = await message.chat.get_member(message.from_user.id)
-    print(type(chat_member))
-    if not isinstance(chat_member,
-                      (types.ChatMemberOwner, types.ChatMemberAdministrator)):
+    if not isinstance(chat_member, (types.ChatMemberOwner, types.ChatMemberAdministrator)) or message.sender_chat:
         if not is_main_admin(message.from_user.id):
             await message.reply('❗️ Команда доступна только владельцу группы.')
             return False
