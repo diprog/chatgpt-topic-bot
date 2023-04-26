@@ -45,9 +45,10 @@ class ChatGPT:
             kwargs['data'] = json.dumps(params)
 
         async with self.session.post(self.endpoint + path, **kwargs) as r:
-            print(r.status)
             if r.status == 200:
                 return await r.json()
+            logging.info(r.status)
+            logging.info(await r.text())
 
     async def get_models(self):
         return await self.get('/v1/models')
