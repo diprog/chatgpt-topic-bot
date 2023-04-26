@@ -1,7 +1,7 @@
 import traceback
 
 from aiogram import Router, types, Bot
-from aiogram.enums import ChatType
+from aiogram.enums import ChatType, ParseMode
 from aiogram.filters import Command
 from aiogram.types import BotCommand, BotCommandScopeChat
 
@@ -86,6 +86,14 @@ async def admin_remove(query: types.CallbackQuery, callback_data: callback_data.
     await query.message.edit_text(await get_admins_text(), reply_markup=await admins())
 
 
+@router.message(Command('clear'))
+async def command_clear(message: types.Message) -> None:
+    if await db.user_contexts.clear(message.from_user.id):
+        await message.reply('🗑 Вы успешно очистили свой контекст.')
+    else:
+        await message.reply('Ваш контекст уже очищен.')
+
+
 @router.message(Command('set'))
 async def command_start_handler(message: types.Message) -> None:
     if not message.chat.is_forum:
@@ -125,10 +133,12 @@ async def any_message(message: types.Message) -> None:
             try:
                 contexts = await db.user_contexts.get()
                 print(contexts.length(user_id))
-                answer = await gpt.completions(contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
-                await reply_message.edit_text(answer)
+                answer = await gpt.completions(
+                    contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
+                await reply_message.edit_text(answer, parse_mode=ParseMode.MARKDOWN)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
             except:
-                await reply_message.edit_text('🔴 Произошла ошибка.')
+                await reply_message.edit_text(
+                    '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
                 await Bot.get_current().send_message(constants.DEVELOPER_ID, traceback.format_exc())

@@ -52,6 +52,19 @@ class UserContexts:
     def messages_dict(self, user_id: int):
         return self.context(user_id).messages_dict()
 
+    async def clear(self, user_id: int) -> bool:
+        try:
+            del self.contexts[user_id]
+            await data.write(self)
+            return True
+        except KeyError:
+            return False
+
 
 async def get() -> UserContexts:
     return await data.read() or UserContexts()
+
+
+async def clear(user_id: int) -> bool:
+    contexts = await get()
+    return await contexts.clear(user_id)
