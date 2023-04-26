@@ -28,10 +28,12 @@ async def topic_filter(message: types.Message, topic=True):
         return False
 
     chat_member = await message.chat.get_member(message.from_user.id)
-    if not isinstance(chat_member, (types.ChatMemberOwner, types.ChatMemberAdministrator)) or message.sender_chat:
-        if not is_main_admin(message.from_user.id):
+    if not isinstance(chat_member, (types.ChatMemberOwner, types.ChatMemberAdministrator)):
+        if message.sender_chat and message.sender_chat.id != message.chat.id:
             await message.reply('❗️ Команда доступна только владельцу группы.')
             return False
+        await message.reply('❗️ Команда доступна только владельцу группы.')
+        return False
 
     if not message.message_thread_id and topic:
         await message.reply('❗️ Команда может быть использована только внутри топика.')
