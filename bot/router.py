@@ -179,7 +179,6 @@ async def any_message(message: types.Message) -> None:
                 print(contexts.length(user_id))
                 answer = await gpt.completions(
                     contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
-                answer = prepare_markdown(answer)
                 await reply_message.edit_text(answer, parse_mode=None)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
