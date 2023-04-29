@@ -180,12 +180,12 @@ async def any_message(message: types.Message) -> None:
                 answer = await gpt.completions(
                     contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
                 answer = prepare_markdown(answer)
-                await reply_message.edit_text(answer, parse_mode=ParseMode.MARKDOWN_V2)
+                await reply_message.edit_text(answer, parse_mode=None)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
 
                 if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
-                    await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN_V2)
+                    await user_message.reply('🤖 ' + answer, parse_mode=None)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
