@@ -11,7 +11,7 @@ import db.settings
 import db.user_contexts
 from bot import callback_data
 from bot.inline_keyboards import admin_request, admins
-from bot.utils import is_main_admin
+from bot.utils import is_main_admin, prepare_markdown
 from chatgpt import ChatGPT
 
 router = Router()
@@ -179,12 +179,13 @@ async def any_message(message: types.Message) -> None:
                 print(contexts.length(user_id))
                 answer = await gpt.completions(
                     contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
-                await reply_message.edit_text(answer, parse_mode=ParseMode.MARKDOWN)
+                answer = prepare_markdown(answer)
+                await reply_message.edit_text(answer, parse_mode=ParseMode.MARKDOWN_V2)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
 
                 if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
-                    await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN)
+                    await user_message.reply('🤖 ' + answer, parse_mode=ParseMode.MARKDOWN_V2)
             except:
                 await reply_message.edit_text(
                     '🔴 Произошла ошибка.\n\n<i>Попробуйте очистить свой контекст с помощью /clear.</i>')
