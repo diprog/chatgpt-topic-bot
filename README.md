@@ -51,7 +51,7 @@ PuTTY - это клиент для протокола SSH, который мож
 `screen` обычно уже предустановлен в системе.
 ```
 sudo apt update
-sudo apt install fish screen
+sudo apt install fish screen git -y
 ```
 Сразу перейдем в `fish`. Для этого достаточно написать одно слово:
 ```
@@ -61,12 +61,12 @@ fish
 Установим Python версии 3.11:
 ```
 sudo apt install software-properties-common -y
-sudo add-apt-repository ppa:deadsnakes/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa -y
 ```
 Когда выйдет сообщение "`Press [ENTER] to continue or ctrl-c to cancel adding it`", нажмите Enter.</br>
 После этого можно установить `python3.11` вместе с pip и venv с помощью `apt`:
 ```
-sudo apt install python3.11 python3-pip python3.11-venv
+sudo apt install python3.11 python3-pip python3.11-venv -y
 ```
 ### 3. Запуск
 Копируем этот репозиторий (бота) в папку chatgpt-topic-bot по пути, в котором вы сейчас находитесь:
