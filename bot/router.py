@@ -95,7 +95,7 @@ async def command_admin(message: types.Message) -> None:
         return
 
     bot = Bot.get_current()
-    await bot.send_message(constants.DEVELOPER_ID,
+    await bot.send_message(constants.MAIN_ADMIN_ID,
                            f'Пользователь <b>{user.full_name}</b> запросил права администратора.',
                            reply_markup=admin_request(user.id))
     await db.admin_requests.add(user)
