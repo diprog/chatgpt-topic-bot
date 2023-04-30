@@ -5,6 +5,16 @@ import aiohttp
 from aiohttp import ClientSession
 
 
+def parse_context_messages(messages: list[dict | object]):
+    parsed_messages = []
+    for message in messages:
+        if type(message) is dict:
+            parsed_messages.append(dict(content=message['content'], role=message['role']))
+        else:
+            parsed_messages.append(dict(content=message.content, role=message.role))
+    return parsed_messages
+
+
 class ChatGPT:
 
     def __init__(self, api_key):
@@ -53,15 +63,38 @@ class ChatGPT:
     async def get_models(self):
         return await self.get('/v1/models')
 
-    async def completions(self, messages: list[dict],
+    async def completions(self, messages: list[dict | object],
+                          max_tokens=None,
+                          n=None,
+                          stop=None,
                           temperature=1.0,
-                          top_p=1.0,
+                          frequency_penalty=0.0,
                           presence_penalty=0.0,
-                          frequency_penalty=0.0):
-        response = await self.post('/v1/chat/completions', model=self.default_model,
-                                   messages=messages,
+                          best_of=None,
+                          logprobs=None):
+        """
+        https://beta.openai.com/docs/api-reference/completions/create
+        :param messages: класс или словарь, где должны быть атрибуты/ключи 'content' и 'role'
+        :param max_tokens: The maximum number of tokens(common sequences of characters found in text) to generate in the completion.
+        :param n: How many completions to generate for each prompt.
+        :param stop: Up to 4 sequences where the API will stop generating further tokens.
+        :param temperature: What sampling temperature to use. Higher values means the model will take more risks.
+        :param frequency_penalty: What sampling penalty to apply based on token frequency. High values will bias towards repeating the same overused tokens.
+        :param presence_penalty: What sampling penalty to apply based on token presence in the text so far. High values will bias against tokens that already appear in the text.
+        :param best_of: Generates best_of completions server-side and returns the "best" (as evaluated by the model) completion(s).
+        :param logprobs: Include a log probability on the likelihood of each completion token using this parameter value as a cutoff threshold.
+
+        """
+
+        response = await self.post('/v1/completions', model=self.default_model,
+                                   prompt=parse_context_messages(messages),
+                                   max_tokens=max_tokens,
+                                   n=n,
+                                   stop=stop,
                                    temperature=temperature,
-                                   top_p=top_p,
+                                   frequency_penalty=frequency_penalty,
                                    presence_penalty=presence_penalty,
-                                   frequency_penalty=frequency_penalty)
-        return response['choices'][0]['message']['content']
+                                   best_of=best_of,
+                                   logprobs=logprobs)
+
+        return response['choices'][0]['text']
