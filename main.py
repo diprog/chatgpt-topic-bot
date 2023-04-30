@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Dispatcher, Bot
+from aiogram.enums import ParseMode
 
 import constants
 import imports
@@ -17,8 +18,8 @@ async def main() -> None:
     imports.import_all('bot.handlers')
     imports.import_all('bot.handlers.commands')
     imports.import_all('bot.handlers.other')
-    locale.init()
-    bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode='HTML')
+    await locale.init()
+    bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode=ParseMode.MARKDOWN)
     dp.include_router(router)
     await dp.start_polling(bot)
 
