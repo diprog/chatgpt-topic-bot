@@ -5,7 +5,7 @@ import db.admin_requests
 import db.logging
 import db.settings
 import db.user_contexts
-from bot.handlers.methods import topic_filter
+from bot.filters import topic_filter
 from bot.router import router
 
 

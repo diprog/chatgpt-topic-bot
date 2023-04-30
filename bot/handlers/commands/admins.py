@@ -10,11 +10,12 @@ from bot.router import router
 from bot.callback_data import AdminRemove
 from bot.inline_keyboards import admins
 from bot.utils import is_main_admin
+from locale import loc
 
 
 async def get_admins_text():
     settings = await db.settings.get()
-    return 'Выберите пользователя, которого нужно удалить из администраторов.' if settings.bot_admins else '❌ У бота нет дополнительных администраторов.\n\n<i>Вы можете попросить пользователя отправить вам запрос на получение прав администратора с помощью команды /admin.</i>'
+    return loc('CHOOSE_ADMIN_TO_REMOVE_MSG') if settings.bot_admins else loc('NO_ADMINS_FOUND_MSG')
 
 
 @router.message(Command('admins'))
@@ -29,5 +30,5 @@ async def command_admins(message: Message) -> None:
 async def admin_remove(query: CallbackQuery, callback_data: AdminRemove):
     settings = await db.settings.get()
     await settings.remove_admin(callback_data.user_id)
-    await Bot.get_current().send_message(callback_data.user_id, 'Вы были лишены прав администратора.')
+    await Bot.get_current().send_message(callback_data.user_id, loc('ADMIN_RIGHTS_REMOVED_MSG'))
     await query.message.edit_text(await get_admins_text(), reply_markup=await admins())
