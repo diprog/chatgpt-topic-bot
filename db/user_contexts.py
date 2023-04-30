@@ -1,8 +1,8 @@
 from typing import Optional
 
-from db import DataFile
+from db import BaseModel
 
-data = DataFile('user_contexts')
+collection = 'user_contexts'
 
 
 class Message:
@@ -11,11 +11,12 @@ class Message:
         self.role = role
 
     def to_dict(self):
-        return self.__dict__.copy()
+        return dict(content=self.content, role=self.role)
 
 
-class UserContext:
-    def __init__(self, messages: Optional[list[Message]] = None):
+class UserContext(BaseModel):
+    def __init__(self, user_id: int, messages: Optional[list[Message]] = None):
+        super().__init__(user_id, collection)
         self.messages = messages or []
 
     def length(self):
@@ -30,41 +31,18 @@ class UserContext:
     def messages_dict(self):
         return [message.to_dict() for message in self.messages]
 
-
-class UserContexts:
-    def __init__(self, contexts: Optional[dict[int, UserContext]] = None):
-        self.contexts = contexts or {}
-
-    def context(self, user_id):
-        try:
-            return self.contexts[user_id]
-        except KeyError:
-            self.contexts[user_id] = UserContext()
-            return self.contexts[user_id]
-
-    async def add_message(self, user_id: int, content: str, role: str):
-        self.context(user_id).add_message(content, role)
-        await data.write(self)
-
-    def length(self, user_id: int):
-        return self.context(user_id).length()
-
-    def messages_dict(self, user_id: int):
-        return self.context(user_id).messages_dict()
-
-    async def clear(self, user_id: int) -> bool:
-        try:
-            del self.contexts[user_id]
-            await data.write(self)
+    async def clear(self) -> bool:
+        if self.messages:
+            self.messages = []
+            await self.save()
             return True
-        except KeyError:
-            return False
+        return False
 
 
-async def get() -> UserContexts:
-    return await data.read() or UserContexts()
+async def get(user_id: int) -> UserContext:
+    return await UserContext.get(collection, id=user_id) or UserContext(user_id)
 
 
 async def clear(user_id: int) -> bool:
-    contexts = await get()
-    return await contexts.clear(user_id)
+    context = await get(user_id)
+    return await context.clear()

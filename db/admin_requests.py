@@ -2,9 +2,9 @@ from typing import Optional
 
 from aiogram.types import User
 
-from db import DataFile
+from db import BaseModel
 
-data = DataFile('admin_requests')
+collection = 'admin_requests'
 
 
 class UserData:
@@ -13,24 +13,25 @@ class UserData:
         self.username = username
 
 
-class AdminRequests:
+class AdminRequests(BaseModel):
     def __init__(self, users: Optional[dict[str | int, UserData]] = None):
+        super().__init__(0, collection)
         self.users = users or {}
 
     async def add(self, user: User):
         self.users[user.id] = UserData(user.full_name, user.username)
-        await data.write(self)
+        await self.save()
 
     async def delete(self, user_id):
         del self.users[user_id]
-        await data.write(self)
+        await self.save()
 
     def get(self, user_id) -> UserData:
         return self.users.get(user_id)
 
 
 async def get() -> AdminRequests:
-    return await data.read() or AdminRequests()
+    return await AdminRequests.get(collection, id=0) or AdminRequests()
 
 
 async def add(user: User):

@@ -1,10 +1,7 @@
 from aiogram.filters import Command
 from aiogram.types import Message
 
-import db.admin_requests
-import db.logging
-import db.settings
-import db.user_contexts
+import db.group_settings
 from bot.filters import topic_filter
 from bot.router import router
 
@@ -12,6 +9,7 @@ from bot.router import router
 @router.message(Command('set'))
 async def command_start_handler(message: Message) -> None:
     if await topic_filter(message):
-        settings = await db.settings.get()
-        await settings.set_topic_for_group(message.chat.id, message.message_thread_id)
+        group_settings = await db.group_settings.get(message.chat.id)
+        group_settings.active_topic_id = message.message_thread_id
+        await group_settings.save()
         await message.reply('✅ Теперь бот будет работать внутри этого топика.')
