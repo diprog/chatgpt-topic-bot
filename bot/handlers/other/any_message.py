@@ -7,6 +7,7 @@ import db
 from bot import router
 from bot.handlers.methods import send_logging_message
 from chatgpt import ChatGPT
+from db.models.user_contexts import ContextMessage
 
 
 @router.message()
@@ -30,7 +31,7 @@ async def any_message(message: types.Message) -> None:
     context = await db.user_contexts.get(user_id)
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
         answer = await gpt.completions(
-            context.messages_dict() + [dict(content=message.text, role='user')],
+            context.messages + [ContextMessage(message.text, 'user')],
             temperature=0.7,
             presence_penalty=0.5,
             frequency_penalty=0.5,
