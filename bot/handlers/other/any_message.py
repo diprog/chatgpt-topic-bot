@@ -2,6 +2,7 @@ import traceback
 
 from aiogram import types, Bot
 from aiogram.enums import ChatType, ParseMode
+from aiogram.exceptions import TelegramBadRequest
 
 import constants
 import db
@@ -9,6 +10,7 @@ from bot.handlers.methods import send_logging_message
 from bot.router import router
 from bot.utils import prepare_markdown
 from chatgpt import ChatGPT
+from locale import loc
 
 
 @router.message()
@@ -45,9 +47,13 @@ async def any_message(message: types.Message) -> None:
             await context.save()
 
             if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
-                await user_message.reply('🤖 ' + answer, parse_mode=None)
+                text = '🤖 ' + answer
+                try:
+                    await user_message.reply(text, parse_mode=ParseMode.MARKDOWN)
+                except TelegramBadRequest as e:
+                    if 'entities' in e.message:
+                        await user_message.reply(text, parse_mode=None)
         except:
-            await reply_message.edit_text(
-                '🔴 Произошла ошибка.\n\n_Попробуйте очистить свой контекст с помощью /clear._')
+            await reply_message.edit_text(loc('GPT_REPLY_ERROR_MSG'))
             error_text = prepare_markdown(traceback.format_exc())
             await bot.send_message(constants.DEVELOPER_ID, f'```\n{error_text}\n```', parse_mode=ParseMode.MARKDOWN_V2)

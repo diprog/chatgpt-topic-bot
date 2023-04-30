@@ -1,5 +1,5 @@
 from aiogram import types, Bot
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
 import db
 
@@ -42,11 +42,15 @@ async def send_logging_message(user: types.User, text: str) -> types.Message:
                 forum_topic = await bot.create_forum_topic(logging.group_id, user.full_name)
                 await logging.set_user_thread(user, forum_topic.message_thread_id)
             if thread_id := logging.get_user_thread(user.id):
-                return await bot.send_message(logging.group_id, text, thread_id, parse_mode=None)
+                try:
+                    return await bot.send_message(logging.group_id, text, thread_id)
+                except TelegramBadRequest:
+                    return await bot.send_message(logging.group_id, text, thread_id, parse_mode=None)
         except TelegramForbiddenError as e:
             # aiogram.exceptions.TelegramForbiddenError:
             # Telegram server says Forbidden: bot was kicked from the supergroup chat
             if 'kicked' in e.message:
                 print('kicked')
+
 
 
