@@ -1,16 +1,18 @@
 import asyncio
 import logging
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
-from aiogram import Dispatcher
+from aiogram import Dispatcher, Bot
 
-from bot import bot
+import constants
 from bot.router import router
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
 
 dp = Dispatcher()
 
 
 async def main() -> None:
+    bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode='HTML')
     dp.include_router(router)
     await dp.start_polling(bot)
 
