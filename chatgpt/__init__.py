@@ -1,22 +1,32 @@
 import json
 import logging
+from typing import Any
 
 import aiohttp
 from aiohttp import ClientSession
 
 
-def parse_context_messages(messages: list[dict | object]):
-    parsed_messages = []
-    for message in messages:
-        if type(message) is dict:
-            parsed_messages.append(dict(content=message['content'], role=message['role']))
-        else:
-            parsed_messages.append(dict(content=message.content, role=message.role))
+def parse_context_messages(messages: list[dict | object]) -> list[dict[str, Any]]:
+    """
+    Преобразует список сообщений в список словарей, содержащих только атрибуты 'content' и 'role'.
+
+    :param messages: Список сообщений, которые могут быть представлены как словари или объекты с атрибутами 'content' и 'role'.
+    :type messages: list[dict | object]
+
+    :return: Список словарей, содержащих только атрибуты 'content' и 'role'.
+    :rtype: list[dict[str, Any]]
+    """
+    parsed_messages = [
+        dict(content=message['content'], role=message['role'])
+        if isinstance(message, dict)
+        else dict(content=message.content, role=message.role)
+        for message in messages
+    ]
+
     return parsed_messages
 
 
 class ChatGPT:
-
     def __init__(self, api_key):
         self.api_key = api_key
         self.headers = {
@@ -68,33 +78,27 @@ class ChatGPT:
                           n=None,
                           stop=None,
                           temperature=1.0,
-                          frequency_penalty=0.0,
+                          top_p=1.0,
                           presence_penalty=0.0,
-                          best_of=None,
-                          logprobs=None):
+                          frequency_penalty=0.0):
         """
-        https://beta.openai.com/docs/api-reference/completions/create
+        https://beta.openai.com/docs/api-reference/chat/create
         :param messages: класс или словарь, где должны быть атрибуты/ключи 'content' и 'role'
         :param max_tokens: The maximum number of tokens(common sequences of characters found in text) to generate in the completion.
         :param n: How many completions to generate for each prompt.
         :param stop: Up to 4 sequences where the API will stop generating further tokens.
-        :param temperature: What sampling temperature to use. Higher values means the model will take more risks.
-        :param frequency_penalty: What sampling penalty to apply based on token frequency. High values will bias towards repeating the same overused tokens.
-        :param presence_penalty: What sampling penalty to apply based on token presence in the text so far. High values will bias against tokens that already appear in the text.
-        :param best_of: Generates best_of completions server-side and returns the "best" (as evaluated by the model) completion(s).
-        :param logprobs: Include a log probability on the likelihood of each completion token using this parameter value as a cutoff threshold.
-
+        :param temperature: What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.
+        :param top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+        :param presence_penalty: What penalty to apply when a token is already present at all in the text.
+        :param frequency_penalty: What penalty to apply when a token has been generated recently.
         """
-
-        response = await self.post('/v1/completions', model=self.default_model,
-                                   prompt=parse_context_messages(messages),
+        response = await self.post('/v1/chat/completions', model=self.default_model,
+                                   messages=parse_context_messages(messages),
                                    max_tokens=max_tokens,
                                    n=n,
                                    stop=stop,
                                    temperature=temperature,
-                                   frequency_penalty=frequency_penalty,
+                                   top_p=top_p,
                                    presence_penalty=presence_penalty,
-                                   best_of=best_of,
-                                   logprobs=logprobs)
-
-        return response['choices'][0]['text']
+                                   frequency_penalty=frequency_penalty)
+        return response['choices'][0]['message']['content']
