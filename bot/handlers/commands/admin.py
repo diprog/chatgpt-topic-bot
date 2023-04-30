@@ -6,7 +6,7 @@ import constants
 import db
 from bot.callback_data import AdminRequestAnswer
 from bot.inline_keyboards import admin_request
-from bot.router import router
+from bot import router
 from locale import loc
 
 

@@ -1,7 +1,7 @@
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from bot.router import router
+from bot import router
 from locale import loc
 
 

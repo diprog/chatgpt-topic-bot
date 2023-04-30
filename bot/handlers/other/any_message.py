@@ -7,7 +7,7 @@ from aiogram.exceptions import TelegramBadRequest
 import constants
 import db
 from bot.handlers.methods import send_logging_message
-from bot.router import router
+from bot import router
 from bot.utils import prepare_markdown
 from chatgpt import ChatGPT
 from locale import loc

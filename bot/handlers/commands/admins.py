@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
 import db
-from bot.router import router
+from bot import router
 from bot.callback_data import AdminRemove
 from bot.inline_keyboards import admins
 from bot.utils import is_main_admin

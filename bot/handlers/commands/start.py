@@ -3,7 +3,7 @@ from aiogram.types import Message
 
 import db
 from bot.handlers.methods import update_commands
-from bot.router import router
+from bot import router
 from locale import loc
 
 

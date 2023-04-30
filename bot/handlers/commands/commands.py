@@ -2,7 +2,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from bot.handlers.methods import update_commands
-from bot.router import router
+from bot import router
 
 
 @router.message(Command('commands'))

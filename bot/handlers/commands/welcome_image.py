@@ -6,7 +6,7 @@ from aiogram.types import Message, ForceReply
 
 import db
 from bot.filters import user_is_bot_admin
-from bot.router import router
+from bot import router
 
 
 class Form(StatesGroup):

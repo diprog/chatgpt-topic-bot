@@ -8,7 +8,7 @@ import constants
 import imports
 import locale
 from bot.middlewares import error_middleware, save_update_to_db_middleware
-from bot.router import router
+from bot import router
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
 

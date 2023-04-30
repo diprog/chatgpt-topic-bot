@@ -3,7 +3,7 @@ from aiogram.types import Message
 
 import db
 from bot.filters import topic_filter
-from bot.router import router
+from bot import router
 
 
 @router.message(Command('set'))

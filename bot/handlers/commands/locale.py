@@ -3,7 +3,7 @@ from aiogram.types import Message
 
 import locale
 from bot.filters import user_is_bot_admin
-from bot.router import router
+from bot import router
 
 
 @router.message(Command('locale'))
