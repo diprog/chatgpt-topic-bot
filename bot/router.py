@@ -164,9 +164,12 @@ async def command_start_handler(message: types.Message) -> None:
 
 @router.message()
 async def any_message(message: types.Message) -> None:
-    if not message.text or message.text.startswith('/') or not message.reply_to_message.from_user.is_bot:
+    if not message.text or message.text.startswith('/'):
         return
 
+    if message.reply_to_message and not message.reply_to_message.from_user.is_bot:
+        return
+    
     bot = Bot.get_current()
     user_id = message.from_user.id
     settings = await db.settings.get()
