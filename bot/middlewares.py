@@ -4,7 +4,8 @@ from typing import Callable, Any, Awaitable
 
 from aiogram import Bot
 from aiogram.enums import ParseMode
-from aiogram.types import Update
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import Update, BufferedInputFile
 
 import constants
 import db
@@ -32,7 +33,14 @@ async def error_middleware(
             reply_method = event.message.reply if event.message.chat.id < 0 else event.message.answer
             await reply_method('🔴 Произошла ошибка.')
             message_json = prepare_markdown(json.dumps(event.message.json()))
-            error = traceback.format_exc()
             message = await bot.send_message(constants.DEVELOPER_ID, '🔴 *Ошибка.*')
             await message.reply(f'💬 Сообщение:\n```\n{message_json}\n```', parse_mode=ParseMode.MARKDOWN_V2)
-            await message.reply(f'📜 Текст ошибки:\n```\n{error}\n```', parse_mode=ParseMode.MARKDOWN_V2)
+            error = traceback.format_exc()
+            try:
+                error_text = prepare_markdown(error)
+                error_text = f'📜 Текст ошибки:\n```\n{error_text}\n```'
+                await message.reply(error_text, parse_mode=ParseMode.MARKDOWN_V2)
+            except TelegramBadRequest as e:
+                if 'message is too long' in e.message:
+                    text_file = BufferedInputFile(error.encode('utf-8'), filename="traceback.txt")
+                    await message.reply_document(text_file)
