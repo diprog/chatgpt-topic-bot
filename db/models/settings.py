@@ -1,15 +1,16 @@
 from typing import Optional
 
 from bot.utils import is_main_admin
-from db import BaseModel
+from db.models import BaseModel
 
 collection = 'settings'
 
 
 class Settings(BaseModel):
-    def __init__(self, bot_admins: Optional[list[int]] = None):
+    def __init__(self, bot_admins: Optional[list[int]] = None, welcome_image_file_id: Optional[str] = None):
         super().__init__(0, collection)
         self.bot_admins = bot_admins or []
+        self.welcome_image_file_id = welcome_image_file_id
 
     def is_bot_admin(self, user_id):
         return user_id in self.bot_admins or is_main_admin(user_id)

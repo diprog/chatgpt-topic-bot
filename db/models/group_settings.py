@@ -2,7 +2,7 @@ from typing import Optional
 
 from aiogram.types import Message
 
-from db import BaseModel
+from db.models import BaseModel
 
 collection = 'group_settings'
 

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from db import BaseModel
+from db.models import BaseModel
 
 collection = 'user_contexts'
 

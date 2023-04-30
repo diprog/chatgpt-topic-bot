@@ -2,7 +2,7 @@ from typing import Optional
 
 from aiogram.types import User
 
-from db import BaseModel
+from db.models import BaseModel
 
 collection = 'admin_requests'
 
