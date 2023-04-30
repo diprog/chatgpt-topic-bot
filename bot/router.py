@@ -1,7 +1,7 @@
 import traceback
 
 from aiogram import Router, types, Bot
-from aiogram.enums import ChatType, ParseMode
+from aiogram.enums import ChatType
 from aiogram.filters import Command
 
 import constants
@@ -11,7 +11,7 @@ import db.settings
 import db.user_contexts
 from bot import callback_data
 from bot.inline_keyboards import admin_request, admins
-from bot.utils import is_main_admin, prepare_markdown
+from bot.utils import is_main_admin
 from chatgpt import ChatGPT
 
 router = Router()
@@ -74,7 +74,8 @@ async def command_start_handler(message: types.Message) -> None:
     ]
 
     if settings.is_bot_admin(message.from_user.id):
-        await bot.set_my_commands(user_commands + admin_commands_private, types.BotCommandScopeChat(chat_id=message.from_user.id))
+        await bot.set_my_commands(user_commands + admin_commands_private,
+                                  types.BotCommandScopeChat(chat_id=message.from_user.id))
 
     await bot.set_my_commands(user_commands + group_admin_commands, types.BotCommandScopeAllChatAdministrators())
     await bot.set_my_commands(user_commands, types.BotCommandScopeAllGroupChats())
@@ -169,7 +170,7 @@ async def any_message(message: types.Message) -> None:
 
     if message.reply_to_message and not message.reply_to_message.from_user.is_bot:
         return
-    
+
     bot = Bot.get_current()
     user_id = message.from_user.id
     settings = await db.settings.get()
@@ -181,7 +182,12 @@ async def any_message(message: types.Message) -> None:
                 contexts = await db.user_contexts.get()
                 print(contexts.length(user_id))
                 answer = await gpt.completions(
-                    contexts.messages_dict(user_id) + [dict(content=message.text, role='user')])
+                    contexts.messages_dict(user_id) + [dict(content=message.text, role='user')],
+                    temperature=0.7,
+                    presence_penalty=0.5,
+                    frequency_penalty=0.5,
+                    top_p=0.5
+                )
                 await reply_message.edit_text(answer, parse_mode=None)
                 await contexts.add_message(user_id, message.text, 'user')
                 await contexts.add_message(user_id, answer, 'assistant')
