@@ -39,7 +39,8 @@ async def any_message(message: types.Message) -> None:
             frequency_penalty=0.5,
             top_p=0.5
         )
-        await reply_message.edit_text(answer, parse_mode=None)
+        await message.reply(answer)
+        await reply_message.delete()
         context.add_message(message.text, 'user')
         context.add_message(answer, 'assistant')
         await context.save()
