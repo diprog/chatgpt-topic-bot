@@ -7,7 +7,7 @@ from aiogram.enums import ParseMode
 import constants
 import imports
 import locale
-from bot.middlewares import error_middleware
+from bot.middlewares import error_middleware, save_update_to_db_middleware
 from bot.router import router
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
@@ -17,6 +17,7 @@ dp = Dispatcher()
 
 @dp.update.outer_middleware()
 async def _(*args, **kwargs):
+    await save_update_to_db_middleware(*args, **kwargs)
     return await error_middleware(*args, **kwargs)
 
 

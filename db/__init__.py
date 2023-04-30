@@ -9,4 +9,5 @@ from .models import admin_requests
 from .models import group_settings
 from .models import logging
 from .models import settings
+from .models import updates
 from .models import user_contexts

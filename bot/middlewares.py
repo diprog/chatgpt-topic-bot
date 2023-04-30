@@ -7,7 +7,16 @@ from aiogram.enums import ParseMode
 from aiogram.types import Update
 
 import constants
+import db
 from bot.utils import prepare_markdown
+
+
+async def save_update_to_db_middleware(
+        handler: Callable[[Update, dict[str, Any]], Awaitable[Any]],
+        event: Update,
+        data: dict[str, Any]
+) -> Any:
+    await db.updates.save(event.dict())
 
 
 async def error_middleware(
