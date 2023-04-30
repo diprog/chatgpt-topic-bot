@@ -3,10 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 
 import constants
-import db.admin_requests
-import db.logging
-import db.settings
-import db.user_contexts
+import db
 from bot.callback_data import AdminRequestAnswer
 from bot.inline_keyboards import admin_request
 from bot.router import router

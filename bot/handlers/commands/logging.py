@@ -1,10 +1,7 @@
 from aiogram.filters import Command
 from aiogram.types import Message
 
-import db.admin_requests
-import db.logging
-import db.settings
-import db.user_contexts
+import db
 from bot.filters import topic_filter
 from bot.router import router
 

@@ -1,16 +1,13 @@
 import traceback
 
 from aiogram import types, Bot
-from aiogram.enums import ChatType
+from aiogram.enums import ChatType, ParseMode
 
 import constants
-import db.admin_requests
-import db.group_settings
-import db.logging
-import db.settings
-import db.user_contexts
+import db
 from bot.handlers.methods import send_logging_message
 from bot.router import router
+from bot.utils import prepare_markdown
 from chatgpt import ChatGPT
 
 
@@ -32,6 +29,7 @@ async def any_message(message: types.Message) -> None:
 
     reply_message = await message.reply('🕑 Пожалуйста, подождите...')
     context = await db.user_contexts.get(user_id)
+    print(context.__dict__)
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
         try:
             answer = await gpt.completions(
@@ -42,12 +40,14 @@ async def any_message(message: types.Message) -> None:
                 top_p=0.5
             )
             await reply_message.edit_text(answer, parse_mode=None)
-            await context.add_message(message.text, 'user')
-            await context.add_message(answer, 'assistant')
+            context.add_message(message.text, 'user')
+            context.add_message(answer, 'assistant')
+            await context.save()
 
             if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
                 await user_message.reply('🤖 ' + answer, parse_mode=None)
         except:
             await reply_message.edit_text(
                 '🔴 Произошла ошибка.\n\n_Попробуйте очистить свой контекст с помощью /clear._')
-            await bot.send_message(constants.DEVELOPER_ID, traceback.format_exc())
+            error_text = prepare_markdown(traceback.format_exc())
+            await bot.send_message(constants.DEVELOPER_ID, f'```\n{error_text}\n```', parse_mode=ParseMode.MARKDOWN_V2)

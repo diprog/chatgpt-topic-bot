@@ -1,8 +1,7 @@
 from aiogram import types, Bot
 from aiogram.exceptions import TelegramForbiddenError
 
-import db.logging
-import db.settings
+import db
 
 
 async def update_commands(user_id: int):

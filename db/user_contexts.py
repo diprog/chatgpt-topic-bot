@@ -40,7 +40,7 @@ class UserContext(BaseModel):
 
 
 async def get(user_id: int) -> UserContext:
-    return await UserContext.get(collection, id=user_id) or UserContext(user_id)
+    return (await UserContext.get(collection, id=user_id)) or UserContext(user_id)
 
 
 async def clear(user_id: int) -> bool:
