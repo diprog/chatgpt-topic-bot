@@ -9,18 +9,20 @@ async def update_commands(user_id: int):
     bot = Bot.get_current()
 
     group_admin_commands = [
-        types.BotCommand(command='/start', description='Обновить список команд.'),
         types.BotCommand(command='/set', description='Отвечать только в топике, в котором вы отправили эту команду.'),
         types.BotCommand(command='/logging', description='Выбрать эту группу для отправки истории сообщений.'),
     ]
 
     admin_commands_private = [
-        types.BotCommand(command='/start', description='Обновить список команд.'),
-        types.BotCommand(command='/admins', description='Управлять выданнами правами администратора.'),
+        types.BotCommand(command='/commands', description='🔄 Обновить список команд.'),
+        types.BotCommand(command='/locale', description='🔄 Обновить локализацию.'),
+        types.BotCommand(command='/admins', description='👮‍♀️ Управлять выданнами правами администратора.'),
     ]
 
     user_commands = [
-        types.BotCommand(command='/clear', description='Очистить свой контекст.')
+        types.BotCommand(command='/start', description='👋 Показать приветственное сообщение.'),
+        types.BotCommand(command='/help', description='❔ Помощь и инструкции.'),
+        types.BotCommand(command='/clear', description='🗑 Забыть текущий диалог.')
     ]
 
     settings = await db.settings.get()
