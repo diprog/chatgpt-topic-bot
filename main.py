@@ -4,6 +4,7 @@ import logging
 from aiogram import Dispatcher, Bot
 
 import constants
+import imports
 import locale
 from bot.router import router
 
@@ -13,6 +14,9 @@ dp = Dispatcher()
 
 
 async def main() -> None:
+    imports.import_all('bot.handlers')
+    imports.import_all('bot.handlers.commands')
+    imports.import_all('bot.handlers.other')
     locale.init()
     bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode='HTML')
     dp.include_router(router)
