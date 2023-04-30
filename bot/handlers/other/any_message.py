@@ -1,16 +1,12 @@
-import traceback
-
 from aiogram import types, Bot
 from aiogram.enums import ChatType, ParseMode
 from aiogram.exceptions import TelegramBadRequest
 
 import constants
 import db
-from bot.handlers.methods import send_logging_message
 from bot import router
-from bot.utils import prepare_markdown
+from bot.handlers.methods import send_logging_message
 from chatgpt import ChatGPT
-from locale import loc
 
 
 @router.message()
@@ -29,6 +25,7 @@ async def any_message(message: types.Message) -> None:
             settings.is_bot_admin(user_id) and message.chat.type == ChatType.PRIVATE)):
         return
 
+    # Наконец-то закончились проверки.
     reply_message = await message.reply('🕑 Пожалуйста, подождите...')
     context = await db.user_contexts.get(user_id)
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
@@ -39,12 +36,23 @@ async def any_message(message: types.Message) -> None:
             frequency_penalty=0.5,
             top_p=0.5
         )
-        await message.reply(answer)
-        await reply_message.delete()
+
+        # Если ответ превышает максимальный размер текста сообщения,
+        # то делим ответ на отдельные части и отправляем по каждой части отдельное сообщение.
+        if len(answer) <= 4096:
+            await reply_message.edit_text(answer, parse_mode=None)
+        else:
+            chunks = [answer[i:i + 4096] for i in range(0, len(answer), 4096)]
+            await reply_message.edit_text(chunks.pop(0), parse_mode=None)
+            for chunk in chunks:
+                await reply_message.reply(chunk, parse_mode=None)
+
+        # Сохраняем историю сообщений в контекст пользователя.
         context.add_message(message.text, 'user')
         context.add_message(answer, 'assistant')
         await context.save()
 
+        # И сохраняем историю сообщений в отдельную группу для логов.
         if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
             text = '🤖 ' + answer
             try:
