@@ -1,6 +1,6 @@
 from aiogram import types
 
-import db.settings
+import db
 
 
 async def chat_is_forum(message: types.Message) -> bool:

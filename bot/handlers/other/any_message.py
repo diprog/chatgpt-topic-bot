@@ -31,29 +31,23 @@ async def any_message(message: types.Message) -> None:
 
     reply_message = await message.reply('🕑 Пожалуйста, подождите...')
     context = await db.user_contexts.get(user_id)
-    print(context.__dict__)
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
-        try:
-            answer = await gpt.completions(
-                context.messages_dict() + [dict(content=message.text, role='user')],
-                temperature=0.7,
-                presence_penalty=0.5,
-                frequency_penalty=0.5,
-                top_p=0.5
-            )
-            await reply_message.edit_text(answer, parse_mode=None)
-            context.add_message(message.text, 'user')
-            context.add_message(answer, 'assistant')
-            await context.save()
+        answer = await gpt.completions(
+            context.messages_dict() + [dict(content=message.text, role='user')],
+            temperature=0.7,
+            presence_penalty=0.5,
+            frequency_penalty=0.5,
+            top_p=0.5
+        )
+        await reply_message.edit_text(answer, parse_mode=None)
+        context.add_message(message.text, 'user')
+        context.add_message(answer, 'assistant')
+        await context.save()
 
-            if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
-                text = '🤖 ' + answer
-                try:
-                    await user_message.reply(text, parse_mode=ParseMode.MARKDOWN)
-                except TelegramBadRequest as e:
-                    if 'entities' in e.message:
-                        await user_message.reply(text, parse_mode=None)
-        except:
-            await reply_message.edit_text(loc('GPT_REPLY_ERROR_MSG'))
-            error_text = prepare_markdown(traceback.format_exc())
-            await bot.send_message(constants.DEVELOPER_ID, f'```\n{error_text}\n```', parse_mode=ParseMode.MARKDOWN_V2)
+        if user_message := await send_logging_message(message.from_user, '👤 ' + message.text):
+            text = '🤖 ' + answer
+            try:
+                await user_message.reply(text, parse_mode=ParseMode.MARKDOWN)
+            except TelegramBadRequest as e:
+                if 'entities' in e.message:
+                    await user_message.reply(text, parse_mode=None)

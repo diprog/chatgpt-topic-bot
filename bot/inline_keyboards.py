@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-import db.admin_requests
-import db.settings
+import db
 from bot import callback_data
 
 
