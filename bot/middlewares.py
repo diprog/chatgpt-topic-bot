@@ -32,15 +32,24 @@ async def error_middleware(
         if event.message:
             reply_method = event.message.reply if event.message.chat.id < 0 else event.message.answer
             await reply_method('🔴 Произошла ошибка.')
-            message_json = prepare_markdown(json.dumps(event.message.json()))
+
             message = await bot.send_message(constants.DEVELOPER_ID, '🔴 *Ошибка.*')
-            await message.reply(f'💬 Сообщение:\n```\n{message_json}\n```', parse_mode=ParseMode.MARKDOWN_V2)
-            error = traceback.format_exc()
+
+            message_json = json.dumps(event.message.json())
+            text = prepare_markdown(message_json)
             try:
-                error_text = prepare_markdown(error)
-                error_text = f'📜 Текст ошибки:\n```\n{error_text}\n```'
+                await message.reply(f'💬 Сообщение:\n```\n{text}\n```', parse_mode=ParseMode.MARKDOWN_V2)
+            except TelegramBadRequest as e:
+                if 'message is too long' in e.message:
+                    text_file = BufferedInputFile(message_json.encode('utf-8'), filename='message.json')
+                    await message.reply_document(text_file)
+
+            error = traceback.format_exc()
+            error_text = prepare_markdown(error)
+            error_text = f'📜 Текст ошибки:\n```\n{error_text}\n```'
+            try:
                 await message.reply(error_text, parse_mode=ParseMode.MARKDOWN_V2)
             except TelegramBadRequest as e:
                 if 'message is too long' in e.message:
-                    text_file = BufferedInputFile(error.encode('utf-8'), filename="traceback.txt")
+                    text_file = BufferedInputFile(error.encode('utf-8'), filename='traceback.txt')
                     await message.reply_document(text_file)

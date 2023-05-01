@@ -5,7 +5,7 @@ from db.models import BaseModel
 collection = 'user_contexts'
 
 
-class Message:
+class ContextMessage:
     def __init__(self, content: str, role: str):
         self.content = content
         self.role = role
@@ -15,7 +15,7 @@ class Message:
 
 
 class UserContext(BaseModel):
-    def __init__(self, user_id: int, messages: Optional[list[Message]] = None):
+    def __init__(self, user_id: int, messages: Optional[list[ContextMessage]] = None):
         super().__init__(user_id, collection)
         self.messages = messages or []
 
@@ -26,7 +26,7 @@ class UserContext(BaseModel):
         return text_length
 
     def add_message(self, content: str, role: str):
-        self.messages.append(Message(content, role))
+        self.messages.append(ContextMessage(content, role))
 
     def messages_dict(self):
         return [message.to_dict() for message in self.messages]
