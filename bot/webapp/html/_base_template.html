@@ -36,7 +36,7 @@
             alert('WebViewQueryId not defined');
             return;
         }
-        $.ajax('/tgapp/initApp', {
+        $.ajax('/chatgpt_topic_bot/initApp', {
             type: 'POST',
             data: {
                 _auth: initData,
@@ -46,12 +46,7 @@
             success: function (result) {
                 console.log(result)
                 if (result.response) {
-                    if (result.response.ok) {
-                        $('#city_name').html(result.response.city)
-                        $('#cities').html(result.response.cities_names)
-                    } else {
-                        alert(result.response.description);
-                    }
+
                 } else {
                     alert('а error');
                 }
@@ -69,7 +64,7 @@
     });
 
     if (initDataUnsafe.query_id && initData) {
-        $.ajax('/tgapp/checkData', {
+        $.ajax('/chatgpt_topic_bot/checkData', {
             type: 'POST',
             data: {_auth: initData},
             dataType: 'json',

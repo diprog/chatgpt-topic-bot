@@ -28,7 +28,7 @@ button {
     width: 100%;
     font-size: 16px;
     margin: 15px 0;
-    padding: 20px 20px;
+    padding: 14px 20px;
     border: none;
     border-radius: 12px;
     background-color: var(--tg-theme-button-color, #50a8eb);
@@ -128,18 +128,7 @@ pre {
     transform: translateY(100vh);
 }
 
-.search {
-    width: 100%;
-    margin: 15px 15px 15px;
-    padding: 12px 20px;
-    border: none;
-    color: var(--tg-theme-text-color);
-    background: var(--tg-theme-secondary-bg-color);
-}
 
-.search::placeholder {
-    color: var(--tg-theme-hint-color);
-}
 
 form {
     display: flex;
@@ -147,32 +136,6 @@ form {
     border-radius: 10px;
     background: var(--tg-theme-secondary-bg-color);
     font-size: 18px;
-}
-
-.region {
-    text-align: left;
-
-    margin: 0px 10px 20px 10px;
-    font-size: 14px;
-    width: min-content;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 10px;
-    background: var(--tg-theme-secondary-bg-color);
-}
-
-.search {
-    padding: 0%;
-    border: none;
-    background: transparent;
-    margin: 0;
-    font-size: 18px;
-}
-
-.search_icon:focus,
-.search:focus {
-    border: none;
-    outline: none;
 }
 
 path {
@@ -224,86 +187,6 @@ path {
     }
 }
 
-.sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: var(--tg-theme-bg-color);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
-
-.sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    text-align: left;
-    font-size: 16px;
-    color: var(--tg-theme-text-color);
-    display: block;
-    transition: 0.3s;
-}
-
-
-.sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-.bottomdrawer {
-    height: 0;
-    width: 100%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: var(--tg-theme-bg-color);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 0px;
-}
-
-.bottomdrawer a {
-    text-decoration: none;
-    text-align: left;
-    font-size: 16px;
-    color: var(--tg-theme-text-color);
-    display: block;
-    transition: 0.1s;
-}
-
-.bottomdrawer .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-#address_title {
-    margin: 20px;
-    width: 75%;
-    text-align: left;
-    color: var(--tg-theme-text-color);
-    font-size: 24px;
-}
-
-.doorcodes table, th, td {
-    border: 3px solid var(--tg-theme-bg-color);
-    border-collapse: collapse;
-    text-align: left;
-    padding: 20px;
-    background-color: var(--tg-theme-secondary-bg-color);
-    border-radius: 12px;
-    font-weight: normal;
-}
-
 a:link {
     text-decoration: none;
 }
@@ -318,4 +201,60 @@ a:hover {
 
 a:active {
     text-decoration: none;
+}
+
+.hint_button {
+    font-size: 13px;
+}
+
+.text_input {
+    padding: 0%;
+    border: none;
+    background: transparent;
+    margin: 0;
+    font-size: 14px;
+}
+
+.text_input:focus {
+    border: none;
+    outline: none;
+}
+.text_input {
+    /*width: 100%;*/
+    /*margin: 15px 15px 15px;*/
+    padding: 8px 20px;
+    border: none;
+    border-radius: 12px;
+    color: var(--tg-theme-text-color);
+    background: var(--tg-theme-secondary-bg-color);
+}
+
+.text_input::placeholder {
+    color: var(--tg-theme-hint-color);
+}
+
+.mono {
+    font-family: monospace;
+}
+
+.param_hint {
+    display:none;
+}
+
+.param_hint h3{
+    font-family: monospace;
+}
+
+.param_hint span{
+    font-family: monospace;
+}
+
+.param_hint h3 > span{
+    font-size: 70%;
+    font-weight: normal;
+}
+
+.number_range_hint {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
 }

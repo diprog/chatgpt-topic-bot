@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<body>
+<section>
+    <div id="main_view">
+        <h1>Параметры выдачи нейросети</h1>
+        <p>
+            <span class="mono">temperature</span> <a href="javascript:void()" class="hint_button" onclick="switchView('temperature_hint_view')">(что делает)</a>
+            <br><span class="number_range_hint">от 0.0 до 2.0</span>
+        </p>
+        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 1.0">
+        <p>
+            <span class="mono">top_p</span> <a href="javascript:void()" class="hint_button" onclick="switchView('top_p_hint_view')">(что делает)</a>
+        </p>
+        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 1.0">
+        <p>
+            <span class="mono">presence_penalty</span> <a href="javascript:void()" class="hint_button" onclick="switchView('presence_penalty_hint_view')">(что делает)</a>
+            <br><span class="number_range_hint">от -2.0 до 2.0</span>
+        </p>
+        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 0.0">
+        <p><span class="mono">frequency_penalty</span> <a href="javascript:void()" class="hint_button"
+                                onclick="switchView('frequency_penalty_hint_view')">(что делает)</a><br><span class="number_range_hint">от -2.0 до 2.0</span></p>
+        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 0.0">
+        <p></p>
+        <button id="save_btn" disabled>Сохранить</button>
+    </div>
+    <div id="temperature_hint_view" class="param_hint">
+        <h3>temperature<br>
+            <span>(float)</span>
+        </h3>
+        <p>Параметр <span>temperature</span> контролирует разнообразие результатов. Чем выше значение, тем более новые и
+            необычные ответы создает нейросеть. Высокое значение может привести к непредсказуемым результатам, поскольку
+            увеличивается вероятность того, что
+            низкочастотные слова будут выбраны в случайном порядке.</p>
+        <p></p>
+        <button onclick="switchView('main_view')">Скрыть подсказку</button>
+    </div>
+    <div id="top_p_hint_view" class="param_hint">
+        <h3>top_p<br>
+            <span>(float)</span>
+        </h3>
+        <p>Параметр <span>top_p</span>, также известный как nucleus sampling, позволяет задавать порог вероятностей на
+            выборку слов, которые могут быть выбраны, чтобы сгенерировать ответ. В отличие от top_k, который обрезает
+            вероятность выборки наиболее вероятных слов, top_p задает порог на сумму вероятностей наиболее вероятных
+            слов, чтобы ограничить эффектную особенность модели, которая может выбирать следующее слово очень
+            маловероятно, но самое вероятное.</p>
+        <p></p>
+        <button onclick="switchView('main_view')">Скрыть подсказку</button>
+    </div>
+    <div id="presence_penalty_hint_view" class="param_hint">
+        <h3>presence_penalty<br>
+            <span>(float)</span>
+        </h3>
+
+        <p>Этот параметр применяется к ранее сгенерированным токенам, чтобы уменьшить их вероятность
+            появления в выходной последовательности. Эти токены используются, когда хотите учесть контекст в выходной
+            последовательности, чтобы избежать повторения фраз и слов.</p>
+        <p></p>
+        <button onclick="switchView('main_view')">Скрыть подсказку</button>
+    </div>
+    <div id="frequency_penalty_hint_view" class="param_hint">
+        <h3>frequency_penalty<br>
+            <span>(float)</span>
+        </h3>
+        <p>параметр <span>frequency_penalty</span> также работает в сочетании с ранее сгенерированными токенами и
+            контролирует
+            частоту появления каждого токена в выходной последовательности. Этот параметр может использоваться, если вы
+            беспокоитесь о повторении фраз и слов в маленьких выходных последовательностях. В этом случае модель будет
+            присуждать меньшие штрафы за токены, которые появляются реже в конечной последовательности, во избежание
+            слишком частого повторения.</p>
+        <p></p>
+        <button onclick="switchView('main_view')">Скрыть подсказку</button>
+    </div>
+</section>
+<script>
+
+    // $('#save_btn').prop('disabled', true);
+    let views = [];
+    $('*[id*=_view]').each(function (i, el) {
+        views.push(el);
+    });
+
+    function switchView(view_id) {
+        views.forEach((element) => {
+            if ($(element).is(":visible")) {
+                $(element).fadeOut(100, () => {
+                    $('#' + view_id).fadeIn(100);
+                });
+            }
+
+        });
+    }
+</script>
+</body>
+</html>
