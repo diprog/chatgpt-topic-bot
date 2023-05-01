@@ -2,27 +2,32 @@
 <html>
 <body>
 <section>
-    <div id="main_view">
+    <div id="main_view" style="display: none">
         <h1>Параметры выдачи нейросети</h1>
         <p>
-            <span class="mono">temperature</span> <a href="javascript:void()" class="hint_button" onclick="switchView('temperature_hint_view')">(что делает)</a>
+            <span class="mono">temperature</span> <a href="javascript:void()" class="hint_button"
+                                                     onclick="switchView('temperature_hint_view')">(что делает)</a>
             <br><span class="number_range_hint">от 0.0 до 2.0</span>
         </p>
-        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 1.0">
+        <input class="text_input" type=number step=0.1 onchange="onTextInputChange()">
         <p>
-            <span class="mono">top_p</span> <a href="javascript:void()" class="hint_button" onclick="switchView('top_p_hint_view')">(что делает)</a>
+            <span class="mono">top_p</span> <a href="javascript:void()" class="hint_button"
+                                               onclick="switchView('top_p_hint_view')">(что делает)</a>
         </p>
-        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 1.0">
+        <input class="text_input" type=number step=0.1 onchange="onTextInputChange()">
         <p>
-            <span class="mono">presence_penalty</span> <a href="javascript:void()" class="hint_button" onclick="switchView('presence_penalty_hint_view')">(что делает)</a>
+            <span class="mono">presence_penalty</span> <a href="javascript:void()" class="hint_button"
+                                                          onclick="switchView('presence_penalty_hint_view')">(что
+            делает)</a>
             <br><span class="number_range_hint">от -2.0 до 2.0</span>
         </p>
-        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 0.0">
+        <input class="text_input" type=number step=0.1 onchange="onTextInputChange()">
         <p><span class="mono">frequency_penalty</span> <a href="javascript:void()" class="hint_button"
-                                onclick="switchView('frequency_penalty_hint_view')">(что делает)</a><br><span class="number_range_hint">от -2.0 до 2.0</span></p>
-        <input class="text_input" type=number step=0.1 placeholder="По умолчанию 0.0">
+                                                          onclick="switchView('frequency_penalty_hint_view')">(что
+            делает)</a><br><span class="number_range_hint">от -2.0 до 2.0</span></p>
+        <input class="text_input" type=number step=0.1 onchange="onTextInputChange()">
         <p></p>
-        <button id="save_btn" disabled>Сохранить</button>
+        <button disabled id="save_btn" onclick="saveUserChatGPTSettings()">Сохранить</button>
     </div>
     <div id="temperature_hint_view" class="param_hint">
         <h3>temperature<br>
@@ -73,7 +78,9 @@
     </div>
 </section>
 <script>
-
+    let user_chatgpt_settings = {};
+    let text_inputs = $('*[class=text_input]');
+    getUserChatGPTSettings();
     // $('#save_btn').prop('disabled', true);
     let views = [];
     $('*[id*=_view]').each(function (i, el) {
@@ -88,6 +95,80 @@
                 });
             }
 
+        });
+    }
+
+    function onTextInputChange() {
+        $('#save_btn').removeProp('disabled');
+    }
+
+    function init(response) {
+        user_chatgpt_settings = response;
+        text_inputs[0].value = response.temperature;
+        text_inputs[1].value = response.top_p;
+        text_inputs[2].value = response.presence_penalty;
+        text_inputs[3].value = response.frequency_penalty;
+        $('#main_view').fadeIn(100);
+    }
+
+    function getUserChatGPTSettings() {
+        if (!initDataUnsafe.query_id) {
+            alert('WebViewQueryId not defined');
+            return;
+        }
+        $.ajax('/chatgpt_topic_bot/getUserChatGPTSettings', {
+            type: 'POST',
+            data: {
+                _auth: initData,
+                _unsafe_data: initDataUnsafe,
+            },
+            dataType: 'json',
+            success: function (result) {
+                console.log(result)
+                if (result) {
+                    init(result);
+                } else {
+                    alert('а error');
+                }
+            },
+            error: function (xhr) {
+                //$('button').prop('disabled', false);
+                //$('#btn_status').text('Server error').addClass('err').show();
+                alert('Server error');
+            }
+        });
+    }
+
+    function saveUserChatGPTSettings() {
+        if (!initDataUnsafe.query_id) {
+            alert('WebViewQueryId not defined');
+            return;
+        }
+        $.ajax('/chatgpt_topic_bot/saveUserChatGPTSettings', {
+            type: 'POST',
+            data: {
+                _auth: initData,
+                _unsafe_data: initDataUnsafe,
+                settings: {
+                    temperature: text_inputs[0].value,
+                    top_p: text_inputs[1].value,
+                    presence_penalty: text_inputs[2].value,
+                    frequency_penalty: text_inputs[3].value,
+                }
+            },
+            dataType: 'json',
+            success: function (result) {
+                console.log(result)
+                if (result) {
+                    $('#save_btn').prop('disabled', true);
+                    alert('✅ Настройки успешно сохранены.')
+                } else {
+                    alert('а error');
+                }
+            },
+            error: function (xhr) {
+                alert('Server error');
+            }
         });
     }
 </script>
