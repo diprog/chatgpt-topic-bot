@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types, Bot
 from aiogram.enums import ChatType, ParseMode
 from aiogram.exceptions import TelegramBadRequest
@@ -8,6 +10,25 @@ from bot import router
 from bot.handlers.methods import send_logging_message
 from chatgpt import ChatGPT
 from db.models.user_contexts import ContextMessage
+from locale import loc
+
+
+async def loading_message_updater(message: types.Message):
+    emojis = '🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛'
+    emoji_index = 1
+    string_index = 2
+    dots = '.'
+    while True:
+        await asyncio.sleep(3)
+        try:
+            emoji = emojis[emoji_index]
+        except IndexError:
+            emoji_index = 0
+            emoji = emojis[emoji_index]
+        await message.edit_text(emoji + ' ' + loc('PROCESSING_MSG') + dots)
+        string_index += 1
+        emoji_index += 1
+        dots += '.'
 
 
 @router.message()
@@ -27,9 +48,11 @@ async def any_message(message: types.Message) -> None:
         return
 
     # Наконец-то закончились проверки.
-    reply_message = await message.reply('🕑 Пожалуйста, подождите...')
+    reply_message = await message.reply('🕐 ' + loc('PROCESSING_MSG'))
+    task = asyncio.create_task(loading_message_updater(reply_message))
     context = await db.user_contexts.get(user_id)
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
+
         answer = await gpt.completions(
             context.messages + [ContextMessage(message.text, 'user')],
             temperature=0.7,
@@ -37,6 +60,8 @@ async def any_message(message: types.Message) -> None:
             frequency_penalty=0.5,
             top_p=0.5
         )
+
+        task.cancel()
 
         # Если ответ превышает максимальный размер текста сообщения,
         # то делим ответ на отдельные части и отправляем по каждой части отдельное сообщение.
