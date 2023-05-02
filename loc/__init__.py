@@ -8,7 +8,7 @@ async def init():
     """
     working_key = None
     lang = None
-    with open('loc/loc.loc', 'r', encoding='utf-8') as f:
+    with open('loc/locale.loc', 'r', encoding='utf-8') as f:
         for line in f.readlines():
             if line[0] == '/':
                 pass
