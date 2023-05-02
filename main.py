@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import ssl
 from pathlib import Path
 
 from aiogram import Dispatcher, Bot
@@ -47,7 +48,13 @@ async def main() -> None:
     app.add_routes([web.static('/chatgpt_topic_bot/css', Path(__file__).parent.resolve() / 'bot/webapp/html/css')])
     app.add_routes(routes)
     setup_application(app, dp, bot=bot)
-    await _run_app(app, host="0.0.0.0", port=80)
+    try:
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_context.load_cert_chain('.ssl/fullchain.pem',
+                                    '.ssl/privkey.pem')
+        await _run_app(app, host="0.0.0.0", port=443, ssl_context=ssl_context)
+    except:
+        await _run_app(app, host="0.0.0.0", port=80)
 
 
 if __name__ == "__main__":
