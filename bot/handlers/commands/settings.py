@@ -3,7 +3,7 @@ from aiogram.types import Message
 
 from bot import router
 from bot.inline_keyboards import user_settings
-from locale import loc
+from loc import loc
 
 
 @router.message(Command(commands=['settings']))

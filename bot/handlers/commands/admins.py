@@ -7,7 +7,7 @@ from bot import router
 from bot.callback_data import AdminRemove
 from bot.inline_keyboards import admins
 from bot.utils import is_main_admin
-from locale import loc
+from loc import loc
 
 
 async def get_admins_text():

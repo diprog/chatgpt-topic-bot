@@ -12,7 +12,7 @@ from bot import router
 from bot.handlers.methods import send_logging_message
 from chatgpt import ChatGPT
 from db.models.user_contexts import ContextMessage
-from locale import loc
+from loc import loc
 
 
 async def loading_message_updater(message: types.Message):

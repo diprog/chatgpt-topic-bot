@@ -14,7 +14,7 @@ async def update_commands(user_id: int):
 
     admin_commands_private = [
         types.BotCommand(command='/commands', description='🔄 Обновить список команд'),
-        types.BotCommand(command='/locale', description='🔄 Обновить локализацию'),
+        types.BotCommand(command='/loc', description='🔄 Обновить локализацию'),
         types.BotCommand(command='/welcome_image', description='🔄 Обновить фото для /start'),
         types.BotCommand(command='/admins', description='👮‍♀️ Управлять выданнами правами администратора'),
     ]

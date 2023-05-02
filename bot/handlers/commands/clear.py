@@ -4,7 +4,7 @@ from aiogram.types import Message
 import db
 from bot.handlers.methods import send_logging_message
 from bot import router
-from locale import loc
+from loc import loc
 
 
 @router.message(Command('clear'))

@@ -12,7 +12,7 @@ from aiohttp.web_app import Application
 
 import constants
 import imports
-import locale
+import loc
 from bot import router
 from bot.middlewares import error_middleware, save_update_to_db_middleware
 from bot.webapp.router import routes
@@ -37,7 +37,7 @@ async def main() -> None:
     imports.import_all('bot.handlers')
     imports.import_all('bot.handlers.commands')
     imports.import_all('bot.handlers.other')
-    await locale.init()
+    await loc.init()
 
     bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode=ParseMode.MARKDOWN)
     dp["base_url"] = 'https://chatgpt-topic-bot.diprog.ru/webapp'
