@@ -161,7 +161,7 @@
             alert('WebViewQueryId not defined');
             return;
         }
-        $.ajax('/chatgpt_topic_bot/getUserChatGPTSettings', {
+        $.ajax('/webapp/getUserChatGPTSettings', {
             type: 'POST',
             data: {
                 _auth: initData,
@@ -190,7 +190,7 @@
             alert('WebViewQueryId not defined');
             return;
         }
-        $.ajax('/chatgpt_topic_bot/saveUserChatGPTSettings', {
+        $.ajax('/webapp/saveUserChatGPTSettings', {
             type: 'POST',
             data: {
                 _auth: initData,

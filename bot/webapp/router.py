@@ -16,20 +16,20 @@ user_state = {}
 routes = web.RouteTableDef()
 
 
-@routes.get('/chatgpt_topic_bot/settings')
+@routes.get('/webapp/settings')
 async def settings_handler(request: Request):
     return web.Response(text=load_from_base_template('settings.html'), content_type='text/html')
 
 
-@routes.get('/chatgpt_topic_bot/bot_setup')
+@routes.get('/webapp/bot_setup')
 async def bot_setup_handler(request: Request):
     return web.Response(text=load_from_base_template('bot_setup.html'), content_type='text/html')
 
-@routes.get('/chatgpt_topic_bot/gpt4')
+@routes.get('/webapp/gpt4')
 async def bot_setup_handler(request: Request):
     return web.Response(text=load_from_base_template('gpt4.html'), content_type='text/html')
 
-@routes.post('/chatgpt_topic_bot/checkData')
+@routes.post('/webapp/checkData')
 async def check_data_handler(request: Request):
     bot: Bot = request.app["bot"]
 
@@ -39,7 +39,7 @@ async def check_data_handler(request: Request):
     return json_response({"ok": False, "err": "Unauthorized"}, status=401)
 
 
-@routes.post('/chatgpt_topic_bot/sendMessage')
+@routes.post('/webapp/sendMessage')
 async def send_message_handler(request: Request):
     bot: Bot = request.app["bot"]
     data = await request.post()
@@ -65,7 +65,7 @@ async def send_message_handler(request: Request):
     return json_response({"ok": True})
 
 
-@routes.post('/chatgpt_topic_bot/initApp')
+@routes.post('/webapp/initApp')
 async def init_app(request: Request):
     bot: Bot = request.app["bot"]
     data = await request.post()
@@ -76,7 +76,7 @@ async def init_app(request: Request):
     return json_response({"ok": False, "err": "Unauthorized"}, status=401)
 
 
-@routes.post('/chatgpt_topic_bot/getUserChatGPTSettings')
+@routes.post('/webapp/getUserChatGPTSettings')
 async def send_message_handler(request: Request):
     bot: Bot = request.app["bot"]
     data = await request.post()
@@ -91,7 +91,7 @@ async def send_message_handler(request: Request):
         return json_response({"ok": False, "err": "Unauthorized"}, status=401)
 
 
-@routes.post('/chatgpt_topic_bot/saveUserChatGPTSettings')
+@routes.post('/webapp/saveUserChatGPTSettings')
 async def send_message_handler(request: Request):
     bot: Bot = request.app["bot"]
     data = await request.post()

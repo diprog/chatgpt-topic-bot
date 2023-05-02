@@ -37,7 +37,7 @@ async def main() -> None:
     await locale.init()
 
     bot = Bot(constants.TELEGRAM_BOT_TOKEN, parse_mode=ParseMode.MARKDOWN)
-    dp["base_url"] = 'https://a271-5-228-139-107.ngrok-free.app/chatgpt_topic_bot'
+    dp["base_url"] = 'https://chatgpt-topic-bot.diprog.ru/webapp'
     dp.startup.register(on_startup)
     dp.include_router(router)
     # await dp.start_polling(bot)

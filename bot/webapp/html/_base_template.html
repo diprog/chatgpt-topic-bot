@@ -36,7 +36,7 @@
             alert('WebViewQueryId not defined');
             return;
         }
-        $.ajax('/chatgpt_topic_bot/initApp', {
+        $.ajax('/webapp/initApp', {
             type: 'POST',
             data: {
                 _auth: initData,
@@ -64,7 +64,7 @@
     });
 
     if (initDataUnsafe.query_id && initData) {
-        $.ajax('/chatgpt_topic_bot/checkData', {
+        $.ajax('/webapp/checkData', {
             type: 'POST',
             data: {_auth: initData},
             dataType: 'json',
