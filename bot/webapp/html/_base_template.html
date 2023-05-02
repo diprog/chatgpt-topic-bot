@@ -91,11 +91,12 @@
         $('.viewport_stable_border').attr('text', window.innerWidth + ' x ' + round(Telegram.WebApp.viewportStableHeight, 2) + ' | is_expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false'));
     }
 
-    // INSERT SCRIPT HERE (this line is for templates.py)
 
     Telegram.WebApp.onEvent('viewportChanged', setViewportData);
     setViewportData();
     initApp();
+
+    // INSERT SCRIPT HERE (this line is for templates.py)
 
 
 </script>

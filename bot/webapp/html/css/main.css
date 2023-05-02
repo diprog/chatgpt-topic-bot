@@ -129,7 +129,6 @@ pre {
 }
 
 
-
 form {
     display: flex;
     padding: 10px 12px 10px 20px;
@@ -204,7 +203,8 @@ a:active {
 }
 
 .hint_button {
-    font-size: 13px;
+    font-size: 90%;
+    font-weight: bold;
 }
 
 .text_input {
@@ -219,6 +219,7 @@ a:active {
     border: none;
     outline: none;
 }
+
 .text_input {
     /*width: 100%;*/
     /*margin: 15px 15px 15px;*/
@@ -238,18 +239,19 @@ a:active {
 }
 
 .param_hint {
-    display:none;
+    display: none;
 }
 
-.param_hint h3{
+.param_hint h3 {
     font-family: monospace;
 }
 
-.param_hint span{
+.param_hint span {
     font-family: monospace;
+    font-weight: lighter;
 }
 
-.param_hint h3 > span{
+.param_hint h3 > span {
     font-size: 70%;
     font-weight: normal;
 }
@@ -257,4 +259,28 @@ a:active {
 .number_range_hint {
     font-size: 14px;
     color: var(--tg-theme-hint-color);
+}
+
+hr {
+    border: 1px solid var(--tg-theme-secondary-bg-color);
+}
+
+blockquote {
+  background: var(--tg-theme-secondary-bg-color);
+  border-left: 6px solid var(--tg-theme-hint-color);
+  margin: 0;
+  padding: 15px;
+  /*quotes: "\201C""\201D""\2018""\2019";*/
+}
+
+blockquote:before {
+  color: var(--tg-theme-hint-color);
+  content: open-quote;
+  font-size: 3em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
 }

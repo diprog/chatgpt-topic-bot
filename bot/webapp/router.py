@@ -17,9 +17,17 @@ routes = web.RouteTableDef()
 
 
 @routes.get('/chatgpt_topic_bot/settings')
-async def demo_handler(request: Request):
+async def settings_handler(request: Request):
     return web.Response(text=load_from_base_template('settings.html'), content_type='text/html')
 
+
+@routes.get('/chatgpt_topic_bot/bot_setup')
+async def bot_setup_handler(request: Request):
+    return web.Response(text=load_from_base_template('bot_setup.html'), content_type='text/html')
+
+@routes.get('/chatgpt_topic_bot/gpt4')
+async def bot_setup_handler(request: Request):
+    return web.Response(text=load_from_base_template('gpt4.html'), content_type='text/html')
 
 @routes.post('/chatgpt_topic_bot/checkData')
 async def check_data_handler(request: Request):

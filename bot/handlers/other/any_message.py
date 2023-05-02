@@ -1,8 +1,10 @@
 import asyncio
+import json
 
 from aiogram import types, Bot
 from aiogram.enums import ChatType, ParseMode
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import BufferedInputFile
 
 import constants
 import db
@@ -36,7 +38,7 @@ async def any_message(message: types.Message) -> None:
     if not message.text or message.text.startswith('/'):
         return
 
-    if message.reply_to_message and not message.reply_to_message.from_user.is_bot:
+    if message.message_thread_id and message.reply_to_message and message.reply_to_message.message_id != message.message_thread_id:
         return
 
     bot = Bot.get_current()
@@ -51,14 +53,16 @@ async def any_message(message: types.Message) -> None:
     reply_message = await message.reply('🕐 ' + loc('PROCESSING_MSG'))
     task = asyncio.create_task(loading_message_updater(reply_message))
     context = await db.user_contexts.get(user_id)
+    user_settings = await db.user_settings.get(user_id)
+    chatgpt_user_settings = user_settings.chatgpt_settings
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
 
         answer = await gpt.completions(
             context.messages + [ContextMessage(message.text, 'user')],
-            temperature=0.7,
-            presence_penalty=0.5,
-            frequency_penalty=0.5,
-            top_p=0.5
+            temperature=chatgpt_user_settings.temperature,
+            presence_penalty=chatgpt_user_settings.presence_penalty,
+            frequency_penalty=chatgpt_user_settings.frequency_penalty,
+            top_p=chatgpt_user_settings.top_p
         )
 
         task.cancel()

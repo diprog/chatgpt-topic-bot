@@ -97,8 +97,8 @@ class ChatGPT:
                                    max_tokens=max_tokens,
                                    n=n,
                                    stop=stop,
-                                   temperature=temperature,
-                                   top_p=top_p,
-                                   presence_penalty=presence_penalty,
-                                   frequency_penalty=frequency_penalty)
+                                   temperature=float(temperature),
+                                   top_p=float(top_p),
+                                   presence_penalty=float(presence_penalty),
+                                   frequency_penalty=float(frequency_penalty))
         return response['choices'][0]['message']['content']

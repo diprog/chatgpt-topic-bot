@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 import db
 from bot import callback_data
@@ -34,3 +34,32 @@ async def admins():
         buttons.append([InlineButton(button_text, callback_data.AdminRemove(user_id=user_id))])
     if buttons:
         return InlineKeyboard(*buttons)
+
+
+def user_settings(base_url):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🤖 Параметры нейросети", web_app=WebAppInfo(url=f"{base_url}/settings")
+                )
+            ]
+        ]
+    )
+
+
+def help(base_url):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🔌 Подключение бота к группе", web_app=WebAppInfo(url=f"{base_url}/bot_setup")
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Почему не GPT-4?", web_app=WebAppInfo(url=f"{base_url}/gpt4")
+                )
+            ]
+        ]
+    )
