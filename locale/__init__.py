@@ -1,5 +1,3 @@
-import aiofiles
-
 default_language = 'ru'
 locale: dict[str, dict[str, str]] = {}
 
@@ -10,8 +8,8 @@ async def init():
     """
     working_key = None
     lang = None
-    async with aiofiles.open('locale/locale.loc', 'r', encoding='utf-8') as f:
-        for line in await f.readlines():
+    with open('locale/locale.loc', 'r', encoding='utf-8') as f:
+        for line in f.readlines():
             if line[0] == '/':
                 pass
             elif line[0] == '#':

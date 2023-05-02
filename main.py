@@ -7,14 +7,15 @@ from aiogram import Dispatcher, Bot
 from aiogram.enums import ParseMode
 from aiogram.webhook.aiohttp_server import setup_application
 from aiohttp import web
-from aiohttp.web import run_app, _run_app
+from aiohttp.web import _run_app
 from aiohttp.web_app import Application
-from bot.webapp.router import routes
+
 import constants
 import imports
 import locale
-from bot.middlewares import error_middleware, save_update_to_db_middleware
 from bot import router
+from bot.middlewares import error_middleware, save_update_to_db_middleware
+from bot.webapp.router import routes
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(module)s %(funcName)s ~~~~ %(message)s')
 
@@ -26,9 +27,11 @@ async def _(*args, **kwargs):
     await save_update_to_db_middleware(*args, **kwargs)
     return await error_middleware(*args, **kwargs)
 
+
 async def on_startup(bot: Bot, base_url: str, dispatcher: Dispatcher):
     await bot.delete_webhook()
     asyncio.create_task(dispatcher.start_polling(bot, base_url=base_url))
+
 
 async def main() -> None:
     imports.import_all('bot.handlers')
