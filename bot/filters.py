@@ -40,9 +40,6 @@ async def topic_filter(message: types.Message, topic=True):
     if not await chat_is_forum(message):
         return False
 
-    if not await user_is_bot_admin(message):
-        return False
-
     if not await user_is_group_admin(message):
         return False
 
