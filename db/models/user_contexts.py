@@ -26,6 +26,8 @@ class UserContext(BaseModel):
         return text_length
 
     def add_message(self, content: str, role: str):
+        if len(self.messages) > 4:
+            self.messages = self.messages[-4:]
         self.messages.append(ContextMessage(content, role))
 
     def messages_dict(self):
