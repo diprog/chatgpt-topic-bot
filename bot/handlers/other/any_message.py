@@ -39,7 +39,8 @@ async def any_message(message: types.Message) -> None:
         return
 
     if message.message_thread_id and message.reply_to_message and message.reply_to_message.message_id != message.message_thread_id:
-        return
+        if not message.reply_to_message.from_user.is_bot:
+            return
 
     bot = Bot.get_current()
     user_id = message.from_user.id
