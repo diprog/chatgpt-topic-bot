@@ -66,7 +66,7 @@ async def any_message(message: types.Message) -> None:
             top_p=chatgpt_user_settings.top_p
         )
 
-        task.cancel()
+        # task.cancel()
 
         # Если ответ превышает максимальный размер текста сообщения,
         # то делим ответ на отдельные части и отправляем по каждой части отдельное сообщение.
