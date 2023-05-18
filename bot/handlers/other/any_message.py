@@ -52,7 +52,7 @@ async def any_message(message: types.Message) -> None:
 
     # Наконец-то закончились проверки.
     reply_message = await message.reply('🕐 ' + loc('PROCESSING_MSG'))
-    task = asyncio.create_task(loading_message_updater(reply_message))
+    # task = asyncio.create_task(loading_message_updater(reply_message))
     context = await db.user_contexts.get(user_id)
     user_settings = await db.user_settings.get(user_id)
     chatgpt_user_settings = user_settings.chatgpt_settings
