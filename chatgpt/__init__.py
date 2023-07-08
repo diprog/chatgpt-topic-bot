@@ -65,10 +65,7 @@ class ChatGPT:
             kwargs['data'] = json.dumps(params)
 
         async with self.session.post(self.endpoint + path, **kwargs) as r:
-            if r.status == 200:
-                return await r.json()
-            logging.info(r.status)
-            logging.info(await r.text())
+            return await r.json()
 
     async def get_models(self):
         return await self.get('/v1/models')
@@ -101,4 +98,4 @@ class ChatGPT:
                                    top_p=float(top_p),
                                    presence_penalty=float(presence_penalty),
                                    frequency_penalty=float(frequency_penalty))
-        return response['choices'][0]['message']['content']
+        return response

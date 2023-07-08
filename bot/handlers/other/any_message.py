@@ -1,10 +1,8 @@
 import asyncio
-import json
 
 from aiogram import types, Bot
 from aiogram.enums import ChatType, ParseMode
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.types import BufferedInputFile
 
 import constants
 import db
@@ -57,8 +55,7 @@ async def any_message(message: types.Message) -> None:
     user_settings = await db.user_settings.get(user_id)
     chatgpt_user_settings = user_settings.chatgpt_settings
     async with ChatGPT(constants.CHATGPT_KEY) as gpt:
-
-        answer = await gpt.completions(
+        response = await gpt.completions(
             context.messages + [ContextMessage(message.text, 'user')],
             temperature=chatgpt_user_settings.temperature,
             presence_penalty=chatgpt_user_settings.presence_penalty,
@@ -66,6 +63,14 @@ async def any_message(message: types.Message) -> None:
             top_p=chatgpt_user_settings.top_p
         )
 
+        if error := response.get('error'):
+            if error['code'] == 'context_length_exceeded':
+                await reply_message.edit_text(loc('GPT_REPLY_ERROR_MSG'))
+            else:
+                await reply_message.edit_text('🔴 Произошла ошибка.\n\n' + error['message'])
+            return
+
+        answer = response['choices'][0]['message']['content']
         # task.cancel()
 
         # Если ответ превышает максимальный размер текста сообщения,
