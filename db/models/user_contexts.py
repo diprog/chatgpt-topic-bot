@@ -28,6 +28,12 @@ class UserContext(BaseModel):
     def add_message(self, content: str, role: str):
         self.messages.append(ContextMessage(content, role))
 
+    def add_user_message(self, content: str):
+        self.messages.append(ContextMessage(content, 'user'))
+
+    def add_assistant_message(self, content: str):
+        self.messages.append(ContextMessage(content, 'assistant'))
+
     def messages_dict(self):
         return [message.to_dict() for message in self.messages]
 
