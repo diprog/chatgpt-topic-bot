@@ -12,3 +12,4 @@ from .models import settings
 from .models import updates
 from .models import user_contexts
 from .models import user_settings
+from .models import stats

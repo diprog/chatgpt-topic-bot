@@ -96,3 +96,6 @@ async def any_message(message: types.Message) -> None:
             except TelegramBadRequest as e:
                 if 'entities' in e.message:
                     await user_message.reply(text, parse_mode=None)
+
+        # Сохраняем статистику.
+        await db.stats.save(context.messages_dict(), response)
