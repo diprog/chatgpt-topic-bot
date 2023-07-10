@@ -10,6 +10,7 @@ async def save(message: dict, context: dict, openai_response: dict):
     data = {
         'context': context,
         'response': openai_response,
+        'message': message,
         'timestamp': time.time(),
         'datetime': datetime.now()
     }
