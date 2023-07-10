@@ -98,4 +98,4 @@ async def any_message(message: types.Message) -> None:
                     await user_message.reply(text, parse_mode=None)
 
         # Сохраняем статистику.
-        await db.stats.save(context.messages_dict(), response)
+        await db.stats.save(message.dict(), context.messages_dict(), response)

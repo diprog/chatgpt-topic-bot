@@ -6,7 +6,7 @@ from db import database
 collection = 'stats'
 
 
-async def save(context: dict, openai_response: dict):
+async def save(message: dict, context: dict, openai_response: dict):
     data = {
         'context': context,
         'response': openai_response,
