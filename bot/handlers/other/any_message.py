@@ -84,8 +84,8 @@ async def any_message(message: types.Message) -> None:
                 await reply_message.reply(chunk, parse_mode=None)
 
         # Сохраняем историю сообщений в контекст пользователя.
-        context.add_message(message.text, 'user')
-        context.add_message(answer, 'assistant')
+        context.add_user_message(message.text)
+        context.add_assistant_message(answer)
         await context.save()
 
         # И сохраняем историю сообщений в отдельную группу для логов.
