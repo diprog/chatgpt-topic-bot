@@ -1,7 +1,7 @@
 from jsonpickle.pickler import Pickler
 from jsonpickle.unpickler import Unpickler
 
-pickler = Pickler()
+pickler = Pickler(numeric_keys=True)
 unpickler = Unpickler()
 
 
