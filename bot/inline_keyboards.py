@@ -29,7 +29,7 @@ async def admins():
     admin_requests = await db.admin_requests.get()
     buttons = []
     for user_id in settings.bot_admins:
-        user_data = admin_requests.get(user_id)
+        user_data = admin_requests.get_user_data(user_id)
         button_text = f'❌ {user_data.full_name} (@{user_data.username})' if user_data.username else f'❌ {user_data.full_name}'
         buttons.append([InlineButton(button_text, callback_data.AdminRemove(user_id=user_id))])
     if buttons:

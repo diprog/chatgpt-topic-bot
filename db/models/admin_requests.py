@@ -26,7 +26,7 @@ class AdminRequests(BaseModel):
         del self.users[user_id]
         await self.save()
 
-    def get(self, user_id) -> UserData:
+    def get_user_data(self, user_id) -> UserData:
         return self.users.get(user_id)
 
 
