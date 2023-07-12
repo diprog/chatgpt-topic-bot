@@ -35,7 +35,7 @@ class ChatGPT:
         }
 
         self.endpoint = 'https://api.openai.com'
-        self.default_model = 'gpt-4'
+        self.default_model = 'gpt-3.5-turbo'
 
         self.session: ClientSession
 
